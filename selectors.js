@@ -9,7 +9,7 @@ const SELECTORS = {
   // ---- Daftar hasil pencarian ----
   // Panel daftar hasil yang di-scroll
   feed: ['div[role="feed"]'],
-  // Link tiap listing di dalam feed (href berisi koordinat & ID tempat)
+  // Link tiap listing di dalam feed (href berisi ID tempat)
   listingLink: ['a[href*="/maps/place/"]'],
   // Kartu pembungkus listing, dicari dengan closest() dari link
   listingCard: ['div[role="article"]', 'div[jsaction*="mouseover"]'],
@@ -37,14 +37,10 @@ const PATTERNS = {
   endOfList: /akhir daftar|end of the list/i,
   // Awalan label aria, mis. "Alamat: " atau "Telepon: "
   labelPrefix: /^[^:]{1,20}:\s*/,
-  // Koordinat di URL tempat: ...!3d-2.0621!4d101.3912...
-  coords: /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
-  // Cadangan: pusat peta di URL ...@-2.06,101.39,17z
-  coordsAt: /@(-?\d+\.\d+),(-?\d+\.\d+)/,
   // ID tempat (stabil antar pencarian): ...!1s0x2e2f...:0x5d...
   placeId: /!1s(0x[0-9a-f]+(?::|%3A)0x[0-9a-f]+)/i,
   // Nomor telepon Indonesia di teks kartu: 0812-3456-7890, +62 812 3456 7890, (0748) 21234
   phone: /(?<![\d.,])(?:\+62\s?|\(?0)\d{2,4}\)?[\d -]{5,12}\d/,
   // Karakter ikon/arah teks tak terlihat yang ikut terbawa innerText
-  junk: /[‎‏-]/g,
+  junk: /[\u200e\u200f\ue000-\uf8ff]/g,
 };

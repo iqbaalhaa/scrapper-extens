@@ -71,3 +71,4 @@ th { position: sticky; top: 0; background: #f1f3f4; }
 tbody tr:nth-child(even) { background: #fafafa; }
 td:nth-child(5) { white-space: nowrap; }
 td:nth-child(7) { min-width: 160px; }
+.hide-rating .rating { display: none; }

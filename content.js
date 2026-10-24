@@ -14,7 +14,6 @@ class StopError extends Error {}
 // ---------- Utilitas ----------
 
 const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-const now = () => new Date().toLocaleString('sv-SE'); // "2026-10-24 20:15:00"
 
 function checkStop() {
   if (stopRequested) throw new StopError('Dihentikan oleh pengguna');
@@ -70,12 +69,6 @@ function safeDecode(s) {
 }
 
 // ---------- Parser ----------
-
-function parseCoords(url) {
-  const u = safeDecode(url || '');
-  const m = u.match(PATTERNS.coords) || u.match(PATTERNS.coordsAt);
-  return m ? { lat: Number(m[1]), lng: Number(m[2]) } : { lat: '', lng: '' };
-}
 
 function placeIdFrom(url) {
   const m = (url || '').match(PATTERNS.placeId);
@@ -157,10 +150,8 @@ function buildRecord({ link, keyword, a, card, panel }) {
     nama: '', kategori: '', rating: '', ulasan: '', alamat: '', telepon: '', website: '',
     ...(a ? extract(CARD_FIELDS, a, card) : {}),
     ...(panel ? filled(extract(DETAIL_FIELDS, panel)) : {}),
-    ...parseCoords(link),
-    link,
+    link, // tidak diekspor, dipakai untuk deduplikasi
     kataKunci: keyword,
-    waktu: now(),
     detail: !!panel,
   };
 }

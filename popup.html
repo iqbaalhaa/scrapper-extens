@@ -39,6 +39,7 @@
   <p id="status" class="muted"></p>
 
   <label class="check"><input id="noWebOnly" type="checkbox"> Hanya yang belum punya website (tanpa web / cuma sosmed) — butuh mode detail</label>
+  <label class="check"><input id="withRating" type="checkbox"> Sertakan rating &amp; jumlah ulasan di export</label>
 
   <div class="buttons">
     <button id="exportXlsx">Export Excel</button>
@@ -50,7 +51,7 @@
   <div class="table-wrap">
     <table id="preview">
       <thead>
-        <tr><th>No</th><th>Nama</th><th>Kategori</th><th>Rating</th><th>Telepon</th><th>Website</th><th>Alamat</th></tr>
+        <tr><th>No</th><th>Nama</th><th>Kategori</th><th class="rating">Rating</th><th>Telepon</th><th>Website</th><th>Alamat</th></tr>
       </thead>
       <tbody></tbody>
     </table>

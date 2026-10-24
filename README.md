@@ -1,6 +1,6 @@
 # Maps Scraper Bisnis (Chrome Extension, Manifest V3)
 
-Mengumpulkan data bisnis dari hasil pencarian Google Maps (nama, kategori, rating, ulasan, alamat, telepon, website, koordinat, link), lalu mengekspornya ke **Excel (.xlsx)**, **HTML**, atau **CSV**.
+Mengumpulkan data bisnis dari hasil pencarian Google Maps (nama, kategori, alamat, telepon, website + status website, kata kunci, dan opsional rating & jumlah ulasan), lalu mengekspornya ke **Excel (.xlsx)**, **HTML**, atau **CSV**.
 
 ## Struktur
 
@@ -54,6 +54,7 @@ File harus disimpan lokal, karena Manifest V3 melarang memuat script dari CDN.
 4. Popup boleh ditutup karena proses tetap berjalan. Buka lagi kapan saja untuk melihat progres.
 5. Klik **Berhenti** kapan saja. Data yang sudah terkumpul tetap tersimpan.
 6. Export lewat **Export Excel / HTML / CSV**. Contoh nama file: `loket-travel_2026-10-24.xlsx` (diambil dari kata yang sama di awal semua kata kunci, atau dari kata kunci pertama).
+   Kolom export: Nama Usaha, Kategori, Alamat, Telepon, Website, Status Website, dan Kata Kunci. Centang **Sertakan rating & jumlah ulasan** untuk menambah kedua kolom itu. Rating dan ulasan selalu ikut diambil saat scraping, jadi checkbox ini bisa diubah kapan saja sebelum export tanpa scraping ulang.
 
 Catatan:
 - **Biarkan tab Google Maps terlihat**, misalnya di jendela tersendiri. Chrome memperlambat timer di tab latar belakang, sehingga proses bisa jauh lebih lambat.
@@ -99,7 +100,7 @@ Peta selector ke data:
 | `detailPanel`, `detailName` | panel tempat (aria-label = nama) |
 | `category`, `rating`, `reviews`, `address`, `phone`, `website` | field detail |
 
-`PATTERNS` di file yang sama berisi pola teks seperti penanda akhir daftar, nama hari, format telepon, dan koordinat `!3d…!4d…`. Pencarian dibuka dengan `?hl=id` supaya teks Google selalu berbahasa Indonesia dan cocok dengan pola ini.
+`PATTERNS` di file yang sama berisi pola teks seperti penanda akhir daftar, format telepon, dan ID tempat `!1s0x…:0x…`. Pencarian dibuka dengan `?hl=id` supaya teks Google selalu berbahasa Indonesia dan cocok dengan pola ini.
 
 ## Debugging
 

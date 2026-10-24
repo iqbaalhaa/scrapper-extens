@@ -14,12 +14,11 @@ const COLUMNS = [
   ['telepon', 'Telepon'],
   ['website', 'Website'],
   ['statusWeb', 'Status Website'],
-  ['lat', 'Latitude'],
-  ['lng', 'Longitude'],
-  ['link', 'Link Google Maps'],
   ['kataKunci', 'Kata Kunci'],
-  ['waktu', 'Waktu Pengambilan'],
 ];
+
+// Rating & ulasan hanya diekspor jika checkbox "Sertakan rating & jumlah ulasan" aktif
+const columns = () => COLUMNS.filter(([k]) => state.withRating || (k !== 'rating' && k !== 'ulasan'));
 
 const $ = (id) => document.getElementById(id);
 const state = { job: null, progress: null, places: [], noWebOnly: false };
@@ -34,7 +33,7 @@ const NOT_OWN_SITE = /(^|\.)(facebook\.com|fb\.com|fb\.me|instagram\.com|tiktok\
 if (globalThis.chrome?.runtime?.id) document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
-  Object.assign(state, await chrome.storage.local.get(['job', 'progress', 'places', 'noWebOnly']));
+  Object.assign(state, await chrome.storage.local.get(['job', 'progress', 'places', 'noWebOnly', 'withRating']));
   // Isi form dengan pengaturan tugas terakhir
   if (state.job) {
     $('keywords').value = state.job.keywords.join('\n');
@@ -42,6 +41,7 @@ async function init() {
     $('detail').checked = state.job.detail;
   }
   $('noWebOnly').checked = !!state.noWebOnly;
+  $('withRating').checked = !!state.withRating;
   chrome.storage.onChanged.addListener((changes) => {
     for (const k in changes) state[k] = changes[k].newValue;
     render();
@@ -53,6 +53,7 @@ async function init() {
     $('keywords').value = keywords.join('\n');
   };
   $('noWebOnly').onchange = (e) => chrome.storage.local.set({ noWebOnly: e.target.checked });
+  $('withRating').onchange = (e) => chrome.storage.local.set({ withRating: e.target.checked });
   $('start').onclick = start;
   $('stop').onclick = () => send({ type: 'stop' });
   $('exportXlsx').onclick = () => guard(exportXlsx);
@@ -132,6 +133,7 @@ function render() {
   $('start').disabled = running;
   $('stop').disabled = !running;
   $('clear').disabled = !list.length;
+  $('preview').classList.toggle('hide-rating', !state.withRating);
 
   const frac = progress?.kwTotal ? Math.min(1, progress.kwDone / progress.kwTotal) : 0;
   $('progress').value = !job ? 0 : job.finished ? 1 : Math.min(1, (job.index + frac) / n);
@@ -145,6 +147,7 @@ function render() {
       ...rendered.rows.map((p, i) => {
         const tr = document.createElement('tr');
         for (const v of [i + 1, p.nama, p.kategori, p.rating, p.telepon, p.statusWeb, p.alamat]) tr.insertCell().textContent = v ?? '';
+        tr.cells[3].className = 'rating';
         return tr;
       })
     );
@@ -177,8 +180,9 @@ function download(content, name, type) {
 
 function exportXlsx() {
   if (typeof XLSX === 'undefined') throw new Error('Library lib/xlsx.full.min.js tidak ditemukan');
-  const headers = COLUMNS.map(([, h]) => h);
-  const rows = view().map((p) => Object.fromEntries(COLUMNS.map(([k, h]) => [h, p[k] ?? ''])));
+  const cols = columns();
+  const headers = cols.map(([, h]) => h);
+  const rows = view().map((p) => Object.fromEntries(cols.map(([k, h]) => [h, p[k] ?? ''])));
   const ws = XLSX.utils.json_to_sheet(rows, { header: headers });
   // Header tebal (style hanya ditulis oleh build xlsx-js-style; SheetJS Community mengabaikannya)
   headers.forEach((_, c) => {
@@ -200,9 +204,10 @@ function csvCell(v) {
 }
 
 function exportCsv() {
-  const lines = [COLUMNS.map(([, h]) => csvCell(h)), ...view().map((p) => COLUMNS.map(([k]) => csvCell(p[k])))];
+  const cols = columns();
+  const lines = [cols.map(([, h]) => csvCell(h)), ...view().map((p) => cols.map(([k]) => csvCell(p[k])))];
   // BOM agar karakter non-ASCII terbaca benar
-  download('﻿' + lines.map((r) => r.join(',')).join('\r\n'), fileName('csv'), 'text/csv;charset=utf-8');
+  download('\ufeff' + lines.map((r) => r.join(',')).join('\r\n'), fileName('csv'), 'text/csv;charset=utf-8');
 }
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -224,9 +229,8 @@ function exportHtml() {
         ? `<a href="tel:${esc(tel)}">${esc(p.telepon)}</a> <a class="wa" href="https://wa.me/${waNumber(tel)}" target="_blank" rel="noopener">WhatsApp</a>`
         : '';
       const site = isHttp(p.website) ? `<a href="${esc(p.website)}" target="_blank" rel="noopener">${esc(p.website.replace(/^https?:\/\/(www\.)?/i, '').split(/[/?#]/)[0])}</a>` : '';
-      const maps = isHttp(p.link) ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">Buka Maps</a>` : '';
-      const coord = p.lat !== '' && p.lng !== '' ? `${esc(p.lat)}, ${esc(p.lng)}` : '';
-      return `<tr><td>${i + 1}</td><td><b>${esc(p.nama)}</b></td><td>${esc(p.kategori)}</td><td>${esc(p.rating)}</td><td>${esc(p.ulasan)}</td><td>${esc(p.alamat)}</td><td class="nowrap">${phone}</td><td>${site}</td><td class="nowrap">${esc(p.statusWeb)}</td><td class="nowrap">${coord}</td><td>${maps}</td><td>${esc(p.kataKunci)}</td><td class="nowrap">${esc(p.waktu)}</td></tr>`;
+      const rating = state.withRating ? `<td>${esc(p.rating)}</td><td>${esc(p.ulasan)}</td>` : '';
+      return `<tr><td>${i + 1}</td><td><b>${esc(p.nama)}</b></td><td>${esc(p.kategori)}</td>${rating}<td class="addr">${esc(p.alamat)}</td><td class="nowrap">${phone}</td><td>${site}</td><td class="nowrap">${esc(p.statusWeb)}</td><td>${esc(p.kataKunci)}</td></tr>`;
     })
     .join('\n');
 
@@ -249,7 +253,7 @@ function exportHtml() {
   tbody tr:nth-child(even) { background: #fafafa; }
   tbody tr:hover { background: #e8f0fe; }
   .nowrap { white-space: nowrap; }
-  td:nth-child(6) { min-width: 240px; }
+  td.addr { min-width: 240px; }
   a { color: #1a73e8; }
   a.wa { display: inline-block; margin-top: 2px; padding: 1px 8px; border-radius: 10px; background: #25d366; color: #fff; text-decoration: none; font-size: 12px; }
 </style>
@@ -263,7 +267,7 @@ function exportHtml() {
 </div>
 <div class="wrap">
 <table>
-<thead><tr><th>No</th><th>Nama Usaha</th><th>Kategori</th><th>Rating</th><th>Ulasan</th><th>Alamat</th><th>Telepon</th><th>Website</th><th>Status Website</th><th>Koordinat</th><th>Maps</th><th>Kata Kunci</th><th>Waktu</th></tr></thead>
+<thead><tr><th>No</th><th>Nama Usaha</th><th>Kategori</th>${state.withRating ? '<th>Rating</th><th>Ulasan</th>' : ''}<th>Alamat</th><th>Telepon</th><th>Website</th><th>Status Website</th><th>Kata Kunci</th></tr></thead>
 <tbody>
 ${rows}
 </tbody>
