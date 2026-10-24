@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Maps Scraper Bisnis</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>Maps Scraper Bisnis</h1>
+
+  <div class="combo">
+    <div>
+      <label for="types">Jenis usaha (pisah koma)</label>
+      <input id="types" type="text" placeholder="cafe, PT, CV, restoran">
+    </div>
+    <div>
+      <label for="areas">Daerah (pisah koma)</label>
+      <input id="areas" type="text" placeholder="Kerinci, Sungai Penuh">
+    </div>
+    <button id="combine" title="Isi kata kunci dengan semua kombinasi jenis usaha × daerah">Buat kata kunci ↓</button>
+  </div>
+
+  <label for="keywords">Kata kunci (satu per baris)</label>
+  <textarea id="keywords" rows="4" placeholder="loket travel Kerinci&#10;loket travel Sungai Penuh&#10;travel Sungai Penuh"></textarea>
+
+  <div class="row">
+    <label for="max">Maks. hasil per kata kunci</label>
+    <input id="max" type="number" min="1" max="500" value="100">
+  </div>
+  <label class="check"><input id="detail" type="checkbox"> Ambil detail lengkap (telepon, website, jam buka — lebih lambat)</label>
+
+  <div class="buttons">
+    <button id="start" class="primary">Mulai</button>
+    <button id="stop">Berhenti</button>
+  </div>
+
+  <progress id="progress" max="1" value="0" aria-label="Progres scraping"></progress>
+  <p id="headline" aria-live="polite"></p>
+  <p id="status" class="muted"></p>
+
+  <label class="check"><input id="noWebOnly" type="checkbox"> Hanya yang belum punya website (tanpa web / cuma sosmed) — butuh mode detail</label>
+
+  <div class="buttons">
+    <button id="exportXlsx">Export Excel</button>
+    <button id="exportHtml">Export HTML</button>
+    <button id="exportCsv">Export CSV</button>
+    <button id="clear" class="danger">Hapus Data</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="preview">
+      <thead>
+        <tr><th>No</th><th>Nama</th><th>Kategori</th><th>Rating</th><th>Telepon</th><th>Website</th><th>Alamat</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="lib/xlsx.full.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
