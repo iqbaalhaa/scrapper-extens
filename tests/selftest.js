@@ -33,6 +33,14 @@ assert.ok(!c.samePlace({ id: 'a:b' }, { id: 'a:c' }));
 assert.ok(c.samePlace({ nama: 'Travel ABC', alamat: 'Jl. Merdeka No. 1' }, { nama: 'travel abc', alamat: 'Jl Merdeka No 1' }));
 assert.ok(!c.samePlace({ nama: 'Travel ABC', alamat: '' }, { nama: 'Travel ABC', alamat: '' }));
 
+// Kartu daftar hasil (format teks asli Google Maps, termasuk ikon tersembunyi )
+const card = (name, text) => [{ getAttribute: () => name }, { innerText: text, querySelectorAll: () => [] }];
+const fam = c.extract(c.CARD_FIELDS, ...card('Family Kerinci', 'Family Kerinci\n4,3(18)\nBiro Perjalanan dan Wisata ·  · Jl. Depati Parbo No.69\nBuka 24 jam · (0748) 21332\nRute'));
+assert.deepEqual({ ...fam }, { nama: 'Family Kerinci', kategori: 'Biro Perjalanan dan Wisata', rating: '', ulasan: '', alamat: 'Jl. Depati Parbo No.69', telepon: '(0748) 21332' });
+const bare = c.extract(c.CARD_FIELDS, ...card('Kopi X', 'Kopi X\nKedai Kopi'));
+assert.equal(bare.kategori, '');
+assert.equal(bare.alamat, '');
+
 // Field yang error diisi kosong, field lain tetap jalan
 const out = c.extract({ ok: () => 'ya', rusak: () => { throw new Error('x'); } });
 assert.deepEqual({ ...out }, { ok: 'ya', rusak: '' });

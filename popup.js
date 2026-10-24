@@ -14,7 +14,6 @@ const COLUMNS = [
   ['telepon', 'Telepon'],
   ['website', 'Website'],
   ['statusWeb', 'Status Website'],
-  ['jamBuka', 'Jam Operasional'],
   ['lat', 'Latitude'],
   ['lng', 'Longitude'],
   ['link', 'Link Google Maps'],
@@ -227,7 +226,7 @@ function exportHtml() {
       const site = isHttp(p.website) ? `<a href="${esc(p.website)}" target="_blank" rel="noopener">${esc(p.website.replace(/^https?:\/\/(www\.)?/i, '').split(/[/?#]/)[0])}</a>` : '';
       const maps = isHttp(p.link) ? `<a href="${esc(p.link)}" target="_blank" rel="noopener">Buka Maps</a>` : '';
       const coord = p.lat !== '' && p.lng !== '' ? `${esc(p.lat)}, ${esc(p.lng)}` : '';
-      return `<tr><td>${i + 1}</td><td><b>${esc(p.nama)}</b></td><td>${esc(p.kategori)}</td><td>${esc(p.rating)}</td><td>${esc(p.ulasan)}</td><td>${esc(p.alamat)}</td><td class="nowrap">${phone}</td><td>${site}</td><td class="nowrap">${esc(p.statusWeb)}</td><td>${esc(p.jamBuka)}</td><td class="nowrap">${coord}</td><td>${maps}</td><td>${esc(p.kataKunci)}</td><td class="nowrap">${esc(p.waktu)}</td></tr>`;
+      return `<tr><td>${i + 1}</td><td><b>${esc(p.nama)}</b></td><td>${esc(p.kategori)}</td><td>${esc(p.rating)}</td><td>${esc(p.ulasan)}</td><td>${esc(p.alamat)}</td><td class="nowrap">${phone}</td><td>${site}</td><td class="nowrap">${esc(p.statusWeb)}</td><td class="nowrap">${coord}</td><td>${maps}</td><td>${esc(p.kataKunci)}</td><td class="nowrap">${esc(p.waktu)}</td></tr>`;
     })
     .join('\n');
 
@@ -250,7 +249,7 @@ function exportHtml() {
   tbody tr:nth-child(even) { background: #fafafa; }
   tbody tr:hover { background: #e8f0fe; }
   .nowrap { white-space: nowrap; }
-  td:nth-child(6), td:nth-child(10) { min-width: 240px; }
+  td:nth-child(6) { min-width: 240px; }
   a { color: #1a73e8; }
   a.wa { display: inline-block; margin-top: 2px; padding: 1px 8px; border-radius: 10px; background: #25d366; color: #fff; text-decoration: none; font-size: 12px; }
 </style>
@@ -264,7 +263,7 @@ function exportHtml() {
 </div>
 <div class="wrap">
 <table>
-<thead><tr><th>No</th><th>Nama Usaha</th><th>Kategori</th><th>Rating</th><th>Ulasan</th><th>Alamat</th><th>Telepon</th><th>Website</th><th>Status Website</th><th>Jam Operasional</th><th>Koordinat</th><th>Maps</th><th>Kata Kunci</th><th>Waktu</th></tr></thead>
+<thead><tr><th>No</th><th>Nama Usaha</th><th>Kategori</th><th>Rating</th><th>Ulasan</th><th>Alamat</th><th>Telepon</th><th>Website</th><th>Status Website</th><th>Koordinat</th><th>Maps</th><th>Kata Kunci</th><th>Waktu</th></tr></thead>
 <tbody>
 ${rows}
 </tbody>

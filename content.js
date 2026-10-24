@@ -154,7 +154,7 @@ const filled = (obj) => Object.fromEntries(Object.entries(obj).filter(([, v]) =>
 function buildRecord({ link, keyword, a, card, panel }) {
   return {
     id: placeIdFrom(link),
-    nama: '', kategori: '', rating: '', ulasan: '', alamat: '', telepon: '', website: '', jamBuka: '',
+    nama: '', kategori: '', rating: '', ulasan: '', alamat: '', telepon: '', website: '',
     ...(a ? extract(CARD_FIELDS, a, card) : {}),
     ...(panel ? filled(extract(DETAIL_FIELDS, panel)) : {}),
     ...parseCoords(link),

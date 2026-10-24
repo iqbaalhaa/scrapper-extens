@@ -1,6 +1,6 @@
 # Maps Scraper Bisnis (Chrome Extension, Manifest V3)
 
-Mengumpulkan data bisnis dari hasil pencarian Google Maps (nama, kategori, rating, ulasan, alamat, telepon, website, jam buka, koordinat, link), lalu mengekspornya ke **Excel (.xlsx)**, **HTML**, atau **CSV**.
+Mengumpulkan data bisnis dari hasil pencarian Google Maps (nama, kategori, rating, ulasan, alamat, telepon, website, koordinat, link), lalu mengekspornya ke **Excel (.xlsx)**, **HTML**, atau **CSV**.
 
 ## Struktur
 
@@ -49,7 +49,7 @@ File harus disimpan lokal, karena Manifest V3 melarang memuat script dari CDN.
    travel Sungai Penuh
    ```
    Cara lain: isi **Jenis usaha** (misalnya `cafe, PT, CV`) dan **Daerah** (misalnya `Kerinci, Sungai Penuh`), lalu klik **Buat kata kunci ↓**. Semua kombinasinya akan terisi otomatis (`cafe Kerinci`, `cafe Sungai Penuh`, `PT Kerinci`, dan seterusnya).
-2. Atur **Maks. hasil per kata kunci** (default 100). Centang **Ambil detail lengkap** jika butuh telepon, website, dan jam buka mingguan.
+2. Atur **Maks. hasil per kata kunci** (default 100). Centang **Ambil detail lengkap** jika butuh alamat lengkap, telepon, dan website.
 3. Klik **Mulai**. Extension memakai tab Google Maps yang sudah ada (atau membuka tab baru), lalu memproses kata kunci satu per satu.
 4. Popup boleh ditutup karena proses tetap berjalan. Buka lagi kapan saja untuk melihat progres.
 5. Klik **Berhenti** kapan saja. Data yang sudah terkumpul tetap tersimpan.
@@ -58,7 +58,7 @@ File harus disimpan lokal, karena Manifest V3 melarang memuat script dari CDN.
 Catatan:
 - **Biarkan tab Google Maps terlihat**, misalnya di jendela tersendiri. Chrome memperlambat timer di tab latar belakang, sehingga proses bisa jauh lebih lambat.
 - Google Maps biasanya hanya menampilkan sekitar **120 hasil per pencarian**. Untuk cakupan lebih luas, pecah kata kunci per wilayah atau kecamatan.
-- Tanpa mode detail, telepon, alamat singkat, dan status buka diambil dari kartu daftar (cepat, kadang kurang lengkap). Dengan mode detail, data diambil dari panel tempat (alamat lengkap dan jadwal mingguan), dengan jeda acak 1,5–4 detik per tempat.
+- Tanpa mode detail, telepon dan alamat singkat diambil dari kartu daftar (cepat, kadang kurang lengkap). Dengan mode detail, data diambil dari panel tempat (alamat lengkap dan website), dengan jeda acak 1,5–4 detik per tempat.
 - **Deduplikasi**: tempat yang sama dikenali dari ID tempat Google (`!1s0x…:0x…`), link, atau kombinasi nama + alamat. Hasil Kerinci dan Sungai Penuh yang tumpang tindih hanya tersimpan sekali. Tempat yang sudah punya data detail tidak dibuka ulang di kata kunci berikutnya.
 - **Mode WhatsApp di HTML**: awalan `0` diubah menjadi `62`. Nomor telepon kantor (fixed line) tetap mendapat tombol, tapi biasanya tidak terdaftar di WhatsApp.
 - **CSV memakai pemisah koma.** Excel dengan regional Indonesia bisa menampilkan semua isi di satu kolom, jadi untuk Excel gunakan **Export Excel**.
@@ -98,7 +98,6 @@ Peta selector ke data:
 | `feed`, `listingLink`, `listingCard`, `cardRating` | daftar hasil & kartu |
 | `detailPanel`, `detailName` | panel tempat (aria-label = nama) |
 | `category`, `rating`, `reviews`, `address`, `phone`, `website` | field detail |
-| `hoursTable`, `hoursLabel` | jam buka mingguan |
 
 `PATTERNS` di file yang sama berisi pola teks seperti penanda akhir daftar, nama hari, format telepon, dan koordinat `!3d…!4d…`. Pencarian dibuka dengan `?hl=id` supaya teks Google selalu berbahasa Indonesia dan cocok dengan pola ini.
 

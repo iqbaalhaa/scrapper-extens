@@ -30,21 +30,13 @@ const SELECTORS = {
   // data-item-id contoh: "phone:tel:081234567890", aria-label: "Telepon: 0812-3456-7890"
   phone: ['button[data-item-id^="phone:tel:"]'],
   website: ['a[data-item-id="authority"]'],
-  // Tabel jam buka (ada di DOM walau dalam keadaan tertutup)
-  hoursTable: ['table'],
-  // Cadangan: elemen yang aria-label-nya berisi jadwal mingguan
-  hoursLabel: ['[aria-label*="jam buka" i]', '[aria-label*="hours" i]'],
 };
 
 const PATTERNS = {
   // Teks penanda akhir daftar hasil
   endOfList: /akhir daftar|end of the list/i,
-  // Nama hari, untuk mengenali tabel/label jam buka
-  days: /senin|selasa|rabu|kamis|jumat|sabtu|minggu|monday|tuesday|wednesday|thursday|friday|saturday|sunday/i,
   // Awalan label aria, mis. "Alamat: " atau "Telepon: "
   labelPrefix: /^[^:]{1,20}:\s*/,
-  // Ekor label jam buka, mis. ". Sembunyikan jam buka untuk seminggu"
-  hoursNoise: /[.,]?\s*(Sembunyikan|Hide|Salin|Copy)\b.*$/i,
   // Koordinat di URL tempat: ...!3d-2.0621!4d101.3912...
   coords: /!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/,
   // Cadangan: pusat peta di URL ...@-2.06,101.39,17z
